@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps | OffGridOne</title>
+    <link rel="shortcut icon" href="./assets/OffGridOne-horizontal.png" type="image/x-icon">
+    <link rel="icon" href="./assets/favicon.ico">
+    <link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="./assets/leaflet.css"/>
+    <script src="./assets/leaflet.js"></script>
+    <script src="./assets/leaflet-hash.js"></script>
+    <script src="./assets/protomaps-leaflet.js"></script>
+    <style>
+        /* Map-specific styles - Override external CSS */
+        .map-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 1 !important;
+            padding-top: 80px !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            height: 100vh !important;
+        }
+        
+        #map {
+            height: 100% !important;
+            width: 100% !important;
+        }
+        
+        .map-section {
+            padding: 0 !important;
+            height: 100vh !important;
+        }
+        
+        /* Remove map controls since we're going full screen */
+        .map-controls {
+            display: none !important;
+        }
+        
+        @media (max-width: 768px) {
+            .map-container {
+                padding-top: 80px !important;
+                height: 100vh !important;
+            }
+        }
+        
+        /* Ensure main content doesn't interfere with fixed map */
+        main {
+            position: relative !important;
+            z-index: 0 !important;
+            padding-top: 0 !important;
+        }
+        
+        /* Make sure header stays above the map */
+        .header {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        /* Override any content section padding */
+        .content-section {
+            padding: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo-container">
+                    <img src="./assets/OffGridOne-horizontal.png" alt="OffGridOne" class="logo">
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="nav-desktop">
+                    <a href="index.html?map=prepared-area.pmtiles&lat=40.6348&lng=-464.8233&zoom=10" class="nav-link">USA</a>
+                </nav>
+
+                <!-- Controls -->
+                <div class="header-controls">
+                    <button class="theme-toggle" id="theme-toggle">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                        <span class="hamburger"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <nav class="nav-mobile" id="nav-mobile">
+                <a href="index.html?map=prepared-area.pmtiles&lat=40.6348&lng=-464.8233&zoom=10" class="nav-link-mobile">
+                    <span>USA</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <section class="content-section map-section">
+            <div class="container">
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    <!-- Scripts -->
+    <script src="./assets/app.js"></script>
+    <script>
+        // Map initialization
+        const map = L.map('map');
+        let hash = new L.Hash(map);
+        
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const mapFile = urlParams.get('map') || 'prepared-area.pmtiles';
+        const lat = parseFloat(urlParams.get('lat')) || 40.6348;
+        const lng = parseFloat(urlParams.get('lng')) || -464.8233;
+        const zoom = parseInt(urlParams.get('zoom')) || 10;
+        
+        // Set initial view if no hash in URL
+        if (!window.location.hash) {
+            map.setView(new L.LatLng(lat, lng), zoom);
+        }
+        
+        // Add the map layer
+        var layer = protomapsL.leafletLayer({
+            url: mapFile,
+            flavor: 'light',
+            lang: "en"
+        });
+        layer.addTo(map);
+        
+        // Debug click handler
+        map.on("click", (ev) => {
+            const wrapped = map.wrapLatLng(ev.latlng);
+            console.log(layer.queryTileFeaturesDebug(wrapped.lng, wrapped.lat));
+        });
+        
+        // Menu functionality removed since we're using full-screen map
+
+    </script>
+</body>
+</html>
