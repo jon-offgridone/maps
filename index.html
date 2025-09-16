@@ -126,7 +126,8 @@
         
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const mapFile = urlParams.get('map') || 'prepared-area.pmtiles';
+        var mapFile = urlParams.get('map') || 'prepared-area.pmtiles';
+        mapFile = './assets/' + mapFile;
         const lat = parseFloat(urlParams.get('lat')) || 40.6348;
         const lng = parseFloat(urlParams.get('lng')) || -464.8233;
         const zoom = parseInt(urlParams.get('zoom')) || 10;
